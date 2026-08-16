@@ -1,796 +1,1603 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bottle Keep Concierge - Grand Hôtel & Resort</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            100: '#fef3c7',
-                            300: '#fcd34d',
-                            400: '#fbbf24',
-                            500: '#d4af37', // Or Luxe
-                            600: '#b8860b',
-                            700: '#996515',
-                            800: '#784d0e',
-                        },
-                        obsidian: '#0b0f17',
-                        noir: '#121824',
-                        surface: '#1a2232',
-                        borderGold: 'rgba(212, 175, 55, 0.25)',
-                    },
-                    fontFamily: {
-                        serif: ['Playfair Display', 'Georgia', 'serif'],
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              gold: {
+                100: "#fef3c7",
+                300: "#fcd34d",
+                400: "#fbbf24",
+                500: "#d4af37", // Or Luxe
+                600: "#b8860b",
+                700: "#996515",
+                800: "#784d0e",
+              },
+              obsidian: "#0b0f17",
+              noir: "#121824",
+              surface: "#1a2232",
+              borderGold: "rgba(212, 175, 55, 0.25)",
+            },
+            fontFamily: {
+              serif: ["Playfair Display", "Georgia", "serif"],
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+          },
+        },
+      };
     </script>
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        /* Barre de défilement élégante */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+      /* Modern Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0b0f17;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2a354a;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d4af37;
+      }
+      .glass-panel {
+        background: rgba(26, 34, 50, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+      }
+      .gold-gradient-text {
+        background: linear-gradient(
+          135deg,
+          #fff2cb 0%,
+          #d4af37 50%,
+          #aa7c11 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      @keyframes pulse-gold {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
         }
-        ::-webkit-scrollbar-track {
-            background: #0b0f17;
+        50% {
+          opacity: 0.7;
+          transform: scale(0.98);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #2a354a;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d4af37;
-        }
-        .glass-panel {
-            background: rgba(26, 34, 50, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #fff2cb 0%, #d4af37 50%, #aa7c11 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+      }
+      .animate-pulse-gold {
+        animation: pulse-gold 2s infinite ease-in-out;
+      }
     </style>
-</head>
-<body class="bg-obsidian text-slate-200 font-sans min-h-screen flex flex-col selection:bg-gold-500 selection:text-black">
-
-    <!-- Toast Notification (PowerApps Notify emulation) -->
-    <div id="toastNotification" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md hidden">
-        <div id="toastIcon" class="text-xl mr-3"></div>
-        <div>
-            <h4 id="toastTitle" class="font-semibold text-sm tracking-wide uppercase"></h4>
-            <p id="toastMessage" class="text-xs text-slate-300 mt-0.5"></p>
-        </div>
-        <button onclick="hideToast()" class="ml-auto pl-4 text-slate-400 hover:text-white">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+  </head>
+  <body
+    class="bg-obsidian text-slate-200 font-sans min-h-screen flex flex-col selection:bg-gold-500 selection:text-black"
+  >
+    <!-- Toast Notification -->
+    <div
+      id="toastNotification"
+      class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md hidden"
+    >
+      <div id="toastIcon" class="text-xl mr-3"></div>
+      <div>
+        <h4
+          id="toastTitle"
+          class="font-semibold text-sm tracking-wide uppercase"
+        ></h4>
+        <p id="toastMessage" class="text-xs text-slate-300 mt-0.5"></p>
+      </div>
+      <button
+        onclick="hideToast()"
+        class="ml-auto pl-4 text-slate-400 hover:text-white"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
 
     <!-- Header Navigation Bar -->
-    <header class="border-b border-borderGold bg-noir/90 backdrop-filter backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Brand Logo / Title -->
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-full border border-gold-500/40 flex items-center justify-center bg-gold-500/10 text-gold-500 shadow-inner">
-                    <i class="fa-solid fa-wine-bottle text-xl"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] sm:text-xs tracking-[0.25em] text-gold-500 font-semibold uppercase block">Conciergerie Grand Hôtel & Resort</span>
-                    <h1 class="font-serif text-lg sm:text-2xl font-bold tracking-wide text-white">Bottle Keep System</h1>
-                </div>
-            </div>
-
-            <!-- Header Quick Controls -->
-            <div class="flex items-center space-x-3">
-                <div class="hidden lg:flex items-center space-x-6 border-r border-slate-800 pr-6 text-xs">
-                    <div class="text-right">
-                        <span class="text-slate-400 block">Dépôts VIP Actifs</span>
-                        <span id="statActiveCount" class="font-bold text-gold-400 text-sm">0</span>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-slate-400 block">Prochain Casier Libre</span>
-                        <span id="statNextSlot" class="font-bold text-emerald-400 text-sm font-mono">N° --</span>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-slate-400 block">Casiers Disponibles</span>
-                        <span id="statAvailableSlots" class="font-bold text-slate-300 text-sm">0</span>
-                    </div>
-                </div>
-
-                <button onclick="openNewBottleModal()" class="bg-gradient-to-r from-gold-600 via-gold-500 to-gold-700 hover:from-gold-500 hover:to-gold-600 text-slate-950 font-semibold px-4 py-2.5 rounded-lg text-xs sm:text-sm tracking-wide shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>Nouveau Dépôt VIP</span>
-                </button>
-            </div>
+    <header
+      class="border-b border-borderGold bg-noir/90 backdrop-filter backdrop-blur-md sticky top-0 z-40"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between"
+      >
+        <!-- Brand Logo / Title -->
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 rounded-full border border-gold-500/40 flex items-center justify-center bg-gold-500/10 text-gold-500 shadow-inner"
+          >
+            <i class="fa-solid fa-wine-bottle text-xl"></i>
+          </div>
+          <div>
+            <span
+              class="text-[10px] sm:text-xs tracking-[0.25em] text-gold-500 font-semibold uppercase block"
+              >Conciergerie Grand Hôtel & Resort</span
+            >
+            <h1
+              class="font-serif text-lg sm:text-2xl font-bold tracking-wide text-white"
+            >
+              Bottle Keep System
+            </h1>
+          </div>
         </div>
+
+        <!-- Header Quick Controls -->
+        <div class="flex items-center space-x-3">
+          <div
+            class="hidden lg:flex items-center space-x-6 border-r border-slate-800 pr-6 text-xs"
+          >
+            <div class="text-right">
+              <span class="text-slate-400 block">Dépôts VIP Actifs</span>
+              <span id="statActiveCount" class="font-bold text-gold-400 text-sm"
+                >0</span
+              >
+            </div>
+            <div class="text-right">
+              <span class="text-slate-400 block">Prochain Casier Libre</span>
+              <span
+                id="statNextSlot"
+                class="font-bold text-emerald-400 text-sm font-mono"
+                >N° --</span
+              >
+            </div>
+          </div>
+
+          <!-- Google Sheets Sync Status Button -->
+          <button
+            onclick="openSyncModal()"
+            id="btnSyncHeader"
+            class="bg-surface/80 hover:bg-slate-800 border border-slate-700 hover:border-gold-500/50 text-slate-300 px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition-all"
+          >
+            <span class="relative flex h-2.5 w-2.5">
+              <span
+                id="syncPulsePing"
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 hidden"
+              ></span>
+              <span
+                id="syncDot"
+                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"
+              ></span>
+            </span>
+            <i class="fa-solid fa-file-excel text-emerald-400 text-sm"></i>
+            <span class="hidden sm:inline" id="syncHeaderStatus"
+              >Google Sheet</span
+            >
+          </button>
+
+          <button
+            onclick="openNewBottleModal()"
+            class="bg-gradient-to-r from-gold-600 via-gold-500 to-gold-700 hover:from-gold-500 hover:to-gold-600 text-slate-950 font-semibold px-4 py-2.5 rounded-lg text-xs sm:text-sm tracking-wide shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>Nouveau Dépôt VIP</span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        <!-- Top Navigation Views Tabs -->
-        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <button onclick="switchView('keeps')" id="tabBtn-keeps" class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-gold-500/20 text-gold-300 border border-gold-500/30">
-                <i class="fa-solid fa-vault text-xs"></i>
-                <span>Garde des Bouteilles Clients</span>
-            </button>
-            <button onclick="switchView('catalog')" id="tabBtn-catalog" class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-                <i class="fa-solid fa-book-open text-xs"></i>
-                <span>Catalogue Spiritueux Bar (<span id="catTotalCount">0</span>)</span>
-            </button>
-            <button onclick="switchView('pool')" id="tabBtn-pool" class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-                <i class="fa-solid fa-grid-2 text-xs"></i>
-                <span>Matrice des Casiers (Pool 1-100+)</span>
-            </button>
+    <main
+      class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8"
+    >
+      <!-- Top Navigation Views Tabs -->
+      <div
+        class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3"
+      >
+        <div class="flex items-center space-x-2 overflow-x-auto">
+          <button
+            onclick="switchView('keeps')"
+            id="tabBtn-keeps"
+            class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-gold-500/20 text-gold-300 border border-gold-500/30"
+          >
+            <i class="fa-solid fa-vault text-xs"></i>
+            <span>Garde des Bouteilles Clients</span>
+          </button>
+          <button
+            onclick="switchView('catalog')"
+            id="tabBtn-catalog"
+            class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <i class="fa-solid fa-book-open text-xs"></i>
+            <span
+              >Catalogue Spiritueux Bar (<span id="catTotalCount">0</span
+              >)</span
+            >
+          </button>
+          <button
+            onclick="switchView('pool')"
+            id="tabBtn-pool"
+            class="view-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <i class="fa-solid fa-grid-2 text-xs"></i>
+            <span>Matrice des Casiers (Pool 1-100+)</span>
+          </button>
         </div>
 
-        <!-- ================= VIEW 1: BOTTLE KEEPS ================= -->
-        <section id="viewKeeps" class="space-y-6">
-            
-            <!-- Search & Filter Bar -->
-            <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-                <!-- Search Box -->
-                <div class="relative flex-grow max-w-md">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="renderBottleList()" placeholder="Rechercher par client, casier (N°), spiritueux..." 
-                        class="w-full pl-10 pr-4 py-2.5 bg-surface/80 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors">
-                </div>
+        <!-- Fast Two-Way Sync Quick Button -->
+        <button
+          onclick="triggerFullSync()"
+          class="text-xs bg-gold-500/10 hover:bg-gold-500/20 border border-gold-500/40 text-gold-400 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+        >
+          <i class="fa-solid fa-rotate text-xs" id="iconSyncSpin"></i>
+          <span>Synchro Google Sheet</span>
+        </button>
+      </div>
 
-                <!-- Status Filters -->
-                <div class="flex items-center space-x-1 bg-surface/60 p-1 rounded-xl border border-slate-800 text-xs font-medium overflow-x-auto">
-                    <button onclick="setFilter('all')" id="filterBtn-all" class="filter-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition-all bg-gold-500/20 text-gold-300 font-semibold whitespace-nowrap">
-                        Tous (<span id="countAll">0</span>)
-                    </button>
-                    <button onclick="setFilter('Active')" id="filterBtn-Active" class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all whitespace-nowrap">
-                        Actifs (<span id="countActive">0</span>)
-                    </button>
-                    <button onclick="setFilter('Expiring')" id="filterBtn-Expiring" class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all whitespace-nowrap">
-                        Bientôt Expirés (<span id="countExpiring">0</span>)
-                    </button>
-                </div>
+      <!-- ================= VIEW 1: BOTTLE KEEPS ================= -->
+      <section id="viewKeeps" class="space-y-6">
+        <!-- Search & Filter Bar -->
+        <div
+          class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between"
+        >
+          <!-- Search Box -->
+          <div class="relative flex-grow max-w-md">
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"
+            ></i>
+            <input
+              type="text"
+              id="searchInput"
+              oninput="renderBottleList()"
+              placeholder="Rechercher par client, casier (N°), spiritueux..."
+              class="w-full pl-10 pr-4 py-2.5 bg-surface/80 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors"
+            />
+          </div>
+
+          <!-- Status Filters -->
+          <div
+            class="flex items-center space-x-1 bg-surface/60 p-1 rounded-xl border border-slate-800 text-xs font-medium overflow-x-auto"
+          >
+            <button
+              onclick="setFilter('all')"
+              id="filterBtn-all"
+              class="filter-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition-all bg-gold-500/20 text-gold-300 font-semibold whitespace-nowrap"
+            >
+              Tous (<span id="countAll">0</span>)
+            </button>
+            <button
+              onclick="setFilter('Active')"
+              id="filterBtn-Active"
+              class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all whitespace-nowrap"
+            >
+              Actifs (<span id="countActive">0</span>)
+            </button>
+            <button
+              onclick="setFilter('Expiring')"
+              id="filterBtn-Expiring"
+              class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all whitespace-nowrap"
+            >
+              Bientôt Expirés (<span id="countExpiring">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottle Cards Grid -->
+        <div
+          id="bottleGrid"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div
+          id="emptyState"
+          class="hidden text-center py-16 border border-dashed border-slate-800 rounded-2xl bg-surface/30"
+        >
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-600 text-2xl mb-4"
+          >
+            <i class="fa-solid fa-wine-bottle"></i>
+          </div>
+          <h3 class="text-slate-300 font-serif font-medium text-lg">
+            Aucun enregistrement trouvé
+          </h3>
+          <p class="text-slate-500 text-xs mt-1">
+            Ajustez votre recherche ou créez un nouveau dépôt VIP.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 2: SPIRITS CATALOG ================= -->
+      <section id="viewCatalog" class="hidden space-y-6">
+        <div class="glass-panel rounded-2xl p-6 border border-borderGold">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6"
+          >
+            <div>
+              <h2 class="font-serif text-xl font-bold text-white">
+                Catalogue Officiel des Alcôves & Spiritueux
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Base de données issue de
+                <code class="text-gold-400">LiquorAndSpiritsBrand</code>
+              </p>
             </div>
+            <input
+              type="text"
+              id="catalogSearch"
+              oninput="renderCatalogList()"
+              placeholder="Rechercher une bouteille ou marque..."
+              class="px-4 py-2 bg-surface border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-gold-500 w-full sm:w-72"
+            />
+          </div>
 
-            <!-- Bottle Cards Grid -->
-            <div id="bottleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Injecté par JavaScript -->
+          <div
+            id="catalogGrid"
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 3: POOL MATRIX ================= -->
+      <section id="viewPool" class="hidden space-y-6">
+        <div class="glass-panel rounded-2xl p-6 border border-borderGold">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6"
+          >
+            <div>
+              <h2
+                class="font-serif text-xl font-bold text-white flex items-center gap-2"
+              >
+                <i class="fa-solid fa-vault text-gold-500 text-sm"></i>
+                <span>Plan Interactif des Casiers à Bouteilles</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Données en direct de la table
+                <code class="text-gold-400">BottleNumbersPool</code>
+              </p>
             </div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden text-center py-16 border border-dashed border-slate-800 rounded-2xl bg-surface/30">
-                <div class="w-16 h-16 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-600 text-2xl mb-4">
-                    <i class="fa-solid fa-wine-bottle"></i>
-                </div>
-                <h3 class="text-slate-300 font-serif font-medium text-lg">Aucun enregistrement trouvé</h3>
-                <p class="text-slate-500 text-xs mt-1">Ajustez votre recherche ou créez un nouveau dépôt VIP.</p>
+            <div class="flex items-center gap-4 text-xs font-medium">
+              <span class="flex items-center gap-1.5 text-slate-300">
+                <span
+                  class="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50 inline-block"
+                ></span>
+                Disponible
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-300">
+                <span
+                  class="w-3 h-3 rounded-md bg-gold-500/20 border border-gold-500/50 inline-block"
+                ></span>
+                Occupé / Assigné
+              </span>
             </div>
-        </section>
+          </div>
 
-        <!-- ================= VIEW 2: SPIRITS CATALOG ================= -->
-        <section id="viewCatalog" class="hidden space-y-6">
-            <div class="glass-panel rounded-2xl p-6 border border-borderGold">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
-                    <div>
-                        <h2 class="font-serif text-xl font-bold text-white">Catalogue Officiel des Alcôves & Spiritueux</h2>
-                        <p class="text-xs text-slate-400 mt-1">Base de données issue de <code class="text-gold-400">LiquorAndSpiritsBrand.csv</code></p>
-                    </div>
-                    <input type="text" id="catalogSearch" oninput="renderCatalogList()" placeholder="Rechercher une bouteille ou marque..." 
-                        class="px-4 py-2 bg-surface border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-gold-500 w-full sm:w-72">
-                </div>
-
-                <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- Injecté par JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= VIEW 3: POOL MATRIX ================= -->
-        <section id="viewPool" class="hidden space-y-6">
-            <div class="glass-panel rounded-2xl p-6 border border-borderGold">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
-                    <div>
-                        <h2 class="font-serif text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-vault text-gold-500 text-sm"></i>
-                            <span>Plan Interactif des Casiers à Bouteilles</span>
-                        </h2>
-                        <p class="text-xs text-slate-400 mt-1">Données en direct de la table <code class="text-gold-400">BottleNumbersPool.csv</code></p>
-                    </div>
-                    <div class="flex items-center gap-4 text-xs font-medium">
-                        <span class="flex items-center gap-1.5 text-slate-300">
-                            <span class="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50 inline-block"></span> Disponible
-                        </span>
-                        <span class="flex items-center gap-1.5 text-slate-300">
-                            <span class="w-3 h-3 rounded-md bg-gold-500/20 border border-gold-500/50 inline-block"></span> Occupé / Assigné
-                        </span>
-                    </div>
-                </div>
-
-                <div id="poolGridFull" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-3">
-                    <!-- Injecté par JS -->
-                </div>
-            </div>
-        </section>
-
+          <div
+            id="poolGridFull"
+            class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-3"
+          >
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-slate-800/80 bg-noir py-6 mt-12 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>&copy; 2026 Grand Hôtel & Resort - Module Conciergerie Bottle Keep</p>
-            <p class="text-slate-600 font-mono">Bases connectées : <span class="text-slate-400">BottleKeep, LiquorAndSpiritsBrand & BottleNumbersPool</span></p>
-        </div>
+    <footer
+      class="border-t border-slate-800/80 bg-noir py-6 mt-12 text-center text-xs text-slate-500"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4"
+      >
+        <p>
+          &copy; 2026 Grand Hôtel & Resort - Module Conciergerie Bottle Keep
+        </p>
+        <p class="text-slate-600 font-mono">
+          Bases connectées :
+          <span class="text-slate-400"
+            >BottleKeep, LiquorAndSpiritsBrand & BottleNumbersPool</span
+          >
+        </p>
+      </div>
     </footer>
 
-    <!-- MODAL 1: FORM3 NEW BOTTLE KEEP (Replication of PowerApps Form3) -->
-    <div id="newBottleModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-noir border border-borderGold w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 glass-panel">
-            
-            <!-- Modal Header -->
-            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-surface/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-500">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-serif text-lg font-bold text-white">Nouveau Dépôt de Bouteille VIP</h3>
-                        <p class="text-[11px] text-slate-400">PowerApps Form: <span class="font-mono text-gold-400">Form3</span></p>
-                    </div>
-                </div>
-                <button onclick="closeNewBottleModal()" class="text-slate-400 hover:text-white p-2 text-sm">
-                    <i class="fa-solid fa-xmark"></i>
+    <!-- MODAL 1: FORM3 NEW BOTTLE KEEP -->
+    <div
+      id="newBottleModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <div
+        class="bg-noir border border-borderGold w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 glass-panel"
+      >
+        <div
+          class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-surface/50"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-8 h-8 rounded-lg bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-500"
+            >
+              <i class="fa-solid fa-plus text-xs"></i>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-white">
+                Nouveau Dépôt de Bouteille VIP
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                PowerApps Form:
+                <span class="font-mono text-gold-400">Form3</span>
+              </p>
+            </div>
+          </div>
+          <button
+            onclick="closeNewBottleModal()"
+            class="text-slate-400 hover:text-white p-2 text-sm"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <form
+          id="bottleKeepForm"
+          onsubmit="handleFormSubmit(event)"
+          class="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
+        >
+          <div>
+            <label
+              class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5"
+            >
+              Nom du Client VIP / Résident (`Title`)
+              <span class="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              id="inputTitle"
+              required
+              placeholder="ex: Akira Satano ou Suite Royale 501"
+              class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label
+              class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5"
+            >
+              Marque / Spiritueux (`BottleCatalog`)
+              <span class="text-red-400">*</span>
+            </label>
+            <select
+              id="selectCatalog"
+              required
+              class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors"
+            ></select>
+          </div>
+
+          <div
+            class="bg-surface/60 border border-slate-800 rounded-xl p-4 space-y-3"
+          >
+            <div class="flex items-center justify-between">
+              <label
+                class="text-xs font-semibold text-gold-400 uppercase tracking-wider"
+              >
+                N° Casier (`BottleKeepNo`) <span class="text-red-400">*</span>
+              </label>
+              <div
+                class="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-700 text-[11px]"
+              >
+                <button
+                  type="button"
+                  id="btnModeAuto"
+                  onclick="setLockerAssignmentMode(true)"
+                  class="px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all"
+                >
+                  <i
+                    class="fa-solid fa-wand-magic-sparkles text-[10px] mr-1"
+                  ></i>
+                  Auto
                 </button>
+                <button
+                  type="button"
+                  id="btnModeManual"
+                  onclick="setLockerAssignmentMode(false)"
+                  class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all"
+                >
+                  <i class="fa-solid fa-sliders text-[10px] mr-1"></i> Manuel
+                </button>
+              </div>
             </div>
 
-            <!-- Modal Form Body -->
-            <form id="bottleKeepForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-                
-                <!-- Title_DataCard3 (Client Name / Ref) -->
+            <div
+              id="autoLockerDisplay"
+              class="flex items-center justify-between p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl"
+            >
+              <div class="flex items-center gap-2.5">
+                <div
+                  class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono font-bold text-sm"
+                >
+                  <i class="fa-solid fa-check"></i>
+                </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5">
-                        Nom du Client VIP / Résident (`Title`) <span class="text-red-400">*</span>
-                    </label>
-                    <input type="text" id="inputTitle" required placeholder="ex: Akira Satano ou Suite Royale 501" 
-                        class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors">
+                  <span
+                    class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider block"
+                    >Attribution Automatique</span
+                  >
+                  <span
+                    id="autoLockerText"
+                    class="text-sm font-bold text-white font-mono"
+                    >Casier N° --</span
+                  >
                 </div>
+              </div>
+              <span class="text-[11px] text-slate-400 italic"
+                >Premier casier libre</span
+              >
+            </div>
 
-                <!-- BottleCatalog_DataCard3 (Spirits Catalog) -->
-                <div>
-                    <label class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5">
-                        Marque / Spiritueux (`BottleCatalog`) <span class="text-red-400">*</span>
-                    </label>
-                    <select id="selectCatalog" required class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
-                        <!-- Populated dynamically from LiquorAndSpiritsBrand dataset -->
-                    </select>
-                </div>
+            <div id="manualLockerDropdown" class="hidden">
+              <select
+                id="selectBottleNo"
+                class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors"
+              ></select>
+            </div>
+          </div>
 
-                <!-- BottleKeepNo_DataCard1 (Automatic or Manual Selection) -->
-                <div class="bg-surface/60 border border-slate-800 rounded-xl p-4 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <label class="text-xs font-semibold text-gold-400 uppercase tracking-wider">
-                            N° Casier (`BottleKeepNo`) <span class="text-red-400">*</span>
-                        </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5"
+              >
+                Date de Dépôt (`SellDate`)
+              </label>
+              <input
+                type="date"
+                id="inputSellDate"
+                onchange="autoCalculateExpiration()"
+                class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5"
+              >
+                Expiration Garde (`ExpirationDate`)
+              </label>
+              <input
+                type="date"
+                id="inputExpirationDate"
+                class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors"
+              />
+            </div>
+          </div>
 
-                        <!-- Toggle Auto/Manual Mode -->
-                        <div class="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-700 text-[11px]">
-                            <button type="button" id="btnModeAuto" onclick="setLockerAssignmentMode(true)" class="px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all">
-                                <i class="fa-solid fa-wand-magic-sparkles text-[10px] mr-1"></i> Auto
-                            </button>
-                            <button type="button" id="btnModeManual" onclick="setLockerAssignmentMode(false)" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all">
-                                <i class="fa-solid fa-sliders text-[10px] mr-1"></i> Manuel
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Auto Display Box -->
-                    <div id="autoLockerDisplay" class="flex items-center justify-between p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono font-bold text-sm">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider block">Attribution Automatique</span>
-                                <span id="autoLockerText" class="text-sm font-bold text-white font-mono">Casier N° 6</span>
-                            </div>
-                        </div>
-                        <span class="text-[11px] text-slate-400 italic">Premier casier libre dans le pool</span>
-                    </div>
-
-                    <!-- Manual Dropdown (Hidden in auto mode) -->
-                    <div id="manualLockerDropdown" class="hidden">
-                        <select id="selectBottleNo" class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
-                            <!-- Populated dynamically with available pool numbers -->
-                        </select>
-                        <p class="text-[10px] text-slate-500 mt-1">Sélectionnez manuellement si le client a un casier spécifique en demande.</p>
-                    </div>
-                </div>
-
-                <!-- Grid for Sell Date & Expiration Date -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- SellDate_DataCard3 -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5">
-                            Date de Dépôt (`SellDate`)
-                        </label>
-                        <input type="date" id="inputSellDate" onchange="autoCalculateExpiration()" 
-                            class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
-                    </div>
-
-                    <!-- ExpirationDate_DataCard3 -->
-                    <div>
-                        <label class="block text-xs font-semibold text-gold-400 uppercase tracking-wider mb-1.5">
-                            Expiration Garde (`ExpirationDate`)
-                        </label>
-                        <input type="date" id="inputExpirationDate" 
-                            class="w-full px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeNewBottleModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-medium transition-colors">
-                        Annuler
-                    </button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-600 text-black font-semibold text-xs tracking-wider uppercase shadow-lg transition-all transform hover:-translate-y-0.5">
-                        <i class="fa-solid fa-check mr-1.5"></i> Valider Dépôt (`SubmitForm`)
-                    </button>
-                </div>
-            </form>
-        </div>
+          <div
+            class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3"
+          >
+            <button
+              type="button"
+              onclick="closeNewBottleModal()"
+              class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-medium transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-600 text-black font-semibold text-xs tracking-wider uppercase shadow-lg transition-all transform hover:-translate-y-0.5"
+            >
+              <i class="fa-solid fa-check mr-1.5"></i> Valider Dépôt
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <!-- MODAL 2: BOTTLE DETAIL & PRINTABLE TAG -->
-    <div id="detailModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-noir border border-borderGold w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden glass-panel transform scale-95 transition-transform duration-300">
-            <div id="detailModalContent" class="p-6">
-                <!-- Content injected via JS -->
-            </div>
-            <div class="px-6 py-3 bg-surface/50 border-t border-slate-800/80 flex items-center justify-between">
-                <button onclick="window.print()" class="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-2">
-                    <i class="fa-solid fa-print"></i>
-                    <span>Imprimer Étiquette de Casier</span>
-                </button>
-                <button onclick="closeDetailModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg">
-                    Fermer
-                </button>
-            </div>
+    <!-- MODAL 2: BOTTLE DETAIL -->
+    <div
+      id="detailModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <div
+        class="bg-noir border border-borderGold w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden glass-panel transform scale-95 transition-transform duration-300"
+      >
+        <div id="detailModalContent" class="p-6"></div>
+        <div
+          class="px-6 py-3 bg-surface/50 border-t border-slate-800/80 flex items-center justify-between"
+        >
+          <button
+            onclick="window.print()"
+            class="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-print"></i>
+            <span>Imprimer Étiquette de Casier</span>
+          </button>
+          <button
+            onclick="closeDetailModal()"
+            class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg"
+          >
+            Fermer
+          </button>
         </div>
+      </div>
     </div>
 
+    <!-- MODAL 3: GOOGLE SHEETS TWO-WAY SYNC SETTINGS -->
+    <div
+      id="syncModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <div
+        class="bg-noir border border-borderGold w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden glass-panel transform scale-95 transition-transform duration-300"
+      >
+        <div
+          class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-surface/50"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400"
+            >
+              <i class="fa-solid fa-file-excel text-base"></i>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-bold text-white">
+                Synchronisation Google Sheets
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                Echange de données bi-directionnel en temps réel
+              </p>
+            </div>
+          </div>
+          <button
+            onclick="closeSyncModal()"
+            class="text-slate-400 hover:text-white p-2 text-sm"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto text-xs">
+          <!-- Web App Endpoint Input -->
+          <div class="space-y-2">
+            <label
+              class="block font-semibold text-gold-400 uppercase tracking-wider"
+            >
+              URL du Web App Google Apps Script
+            </label>
+            <div class="flex gap-2">
+              <input
+                type="url"
+                id="inputScriptUrl"
+                placeholder="https://script.google.com/macros/s/AKfycbx.../exec"
+                class="flex-1 px-3.5 py-2.5 bg-surface border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors font-mono"
+              />
+              <button
+                onclick="saveScriptUrl()"
+                class="px-4 py-2.5 bg-gold-500/20 border border-gold-500/40 text-gold-300 rounded-xl font-semibold hover:bg-gold-500/30 transition-colors whitespace-nowrap"
+              >
+                Enregistrer
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400">
+              Entrez l'URL générée par votre script Google Sheets déployé pour
+              activer la synchro bi-directionnelle.
+            </p>
+          </div>
+
+          <!-- Sync Controls & Actions -->
+          <div
+            class="bg-surface/60 border border-slate-800 rounded-xl p-4 space-y-4"
+          >
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3"
+            >
+              <div>
+                <span class="font-bold text-slate-200 block text-sm"
+                  >Actions de Synchronisation</span
+                >
+                <span class="text-slate-400 text-[11px]" id="lastSyncDateLabel"
+                  >Dernière synchronisation : Jamais</span
+                >
+              </div>
+
+              <!-- Auto-sync Toggle -->
+              <label class="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  id="toggleAutoSync"
+                  onchange="toggleAutoSyncSetting(this.checked)"
+                  class="sr-only peer"
+                />
+                <div
+                  class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold-500 relative"
+                ></div>
+                <span class="ml-2 text-slate-300 text-xs font-medium"
+                  >Synchro Auto à chaque modification</span
+                >
+              </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                onclick="syncPullFromSheet()"
+                class="p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all text-center"
+              >
+                <i
+                  class="fa-solid fa-cloud-arrow-down text-emerald-400 text-base"
+                ></i>
+                <span class="font-semibold text-slate-200"
+                  >Importer (Pull)</span
+                >
+                <span class="text-[10px] text-slate-400"
+                  >Google Sheet ➔ App</span
+                >
+              </button>
+
+              <button
+                onclick="syncPushToSheet()"
+                class="p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all text-center"
+              >
+                <i
+                  class="fa-solid fa-cloud-arrow-up text-gold-400 text-base"
+                ></i>
+                <span class="font-semibold text-slate-200"
+                  >Exporter (Push)</span
+                >
+                <span class="text-[10px] text-slate-400"
+                  >App ➔ Google Sheet</span
+                >
+              </button>
+
+              <button
+                onclick="triggerFullSync()"
+                class="p-3 bg-gradient-to-br from-gold-600/30 to-gold-500/10 border border-gold-500/50 hover:border-gold-500 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all text-center"
+              >
+                <i class="fa-solid fa-rotate text-gold-400 text-base"></i>
+                <span class="font-bold text-gold-300">Synchro 2 Sens</span>
+                <span class="text-[10px] text-gold-400/80"
+                  >Fusion Bi-Directionnelle</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <!-- Google Apps Script Installation Instructions Accordion -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <button
+              onclick="toggleScriptGuide()"
+              class="w-full p-3.5 bg-surface/50 hover:bg-surface flex items-center justify-between font-semibold text-slate-200"
+            >
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-code text-gold-500"></i>
+                <span>Guide de configuration du Google Sheet (2 minutes)</span>
+              </span>
+              <i
+                class="fa-solid fa-chevron-down text-slate-400 transition-transform"
+                id="arrowScriptGuide"
+              ></i>
+            </button>
+
+            <div
+              id="containerScriptGuide"
+              class="p-4 bg-noir space-y-3 hidden border-t border-slate-800"
+            >
+              <ol
+                class="list-decimal list-inside space-y-1.5 text-slate-300 text-[11px]"
+              >
+                <li>
+                  Ouvrez votre feuille Google Sheet contenant vos onglets.
+                </li>
+                <li>
+                  Allez dans le menu
+                  <code class="text-gold-400">Extensions</code> ➔
+                  <code class="text-gold-400">Apps Script</code>.
+                </li>
+                <li>
+                  Effacez le code existant et collez le script ci-dessous :
+                </li>
+              </ol>
+
+              <div class="relative">
+                <pre
+                  class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] text-emerald-400 font-mono overflow-x-auto max-h-48"
+                  id="gasCodeSnippet"
+                >
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var keepsSheet = ss.getSheetByName("BottleKeep") || ss.getSheets()[0];
+  var data = keepsSheet.getDataRange().getValues();
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", data: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("BottleKeep") || ss.getSheets()[0];
+    
+    if (contents.action === "push" && contents.bottleKeeps) {
+      // Met à jour les lignes avec les données envoyées
+      sheet.clearContents();
+      sheet.appendRow(["ID", "BottleKeepNo", "Title", "BottleCatalog", "SellDate", "ExpirationDate", "LastUsageDate", "Status"]);
+      contents.bottleKeeps.forEach(function(b) {
+        sheet.appendRow([b.ID, b.BottleKeepNo, b.Title, b.BottleCatalog, b.SellDate, b.ExpirationDate, b.LastUsageDate, b.Status]);
+      });
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+                            </pre
+                >
+                <button
+                  onclick="copyGasCode()"
+                  class="absolute top-2 right-2 px-2.5 py-1 bg-surface hover:bg-slate-800 border border-slate-700 text-slate-300 rounded text-[10px] font-medium"
+                >
+                  <i class="fa-solid fa-copy mr-1"></i> Copier
+                </button>
+              </div>
+
+              <ol
+                start="4"
+                class="list-decimal list-inside space-y-1.5 text-slate-300 text-[11px]"
+              >
+                <li>
+                  Cliquez sur <code class="text-gold-400">Déployer</code> ➔
+                  <code class="text-gold-400">Nouveau déploiement</code>.
+                </li>
+                <li>
+                  Sélectionnez
+                  <code class="text-gold-400">Application Web</code>, définissez
+                  l'accès sur
+                  <code class="text-gold-400">"N'importe qui" (Anyone)</code>,
+                  puis validez.
+                </li>
+                <li>
+                  Copiez l'URL de l'application Web et collez-la dans le champ
+                  ci-dessus.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="px-6 py-3 bg-surface/50 border-t border-slate-800 flex items-center justify-end"
+        >
+          <button
+            onclick="closeSyncModal()"
+            class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl font-medium"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- REAL DATASETS & JAVASCRIPT LOGIC -->
     <script>
-        /* ==========================================================================
+      /* ==========================================================================
            1. REAL DATASET IMPORT: LIQUOR & SPIRITS BRAND
            ========================================================================== */
-        const LiquorAndSpiritsBrands = [
-            { title: "Bas Armagnac Baron Gaston Legrand 1992", size: "700ml" },
-            { title: "Hennessy XO", size: "700ml" },
-            { title: "Martell Cordon Bleu", size: "700ml" },
-            { title: "Martell VSOP Red Barrel", size: "700ml" },
-            { title: "Martell XO", size: "700ml" },
-            { title: "Remy Martin Louis XIII", size: "700ml" },
-            { title: "Coquerel Calvados Pomme Deve", size: "700ml" },
-            { title: "Dupon Calvados Fine", size: "700ml" },
-            { title: "Bushmills Single Malt 16Y", size: "700ml" },
-            { title: "Jack Daniels Single Barrel", size: "750ml" },
-            { title: "John Myer Four Grain Whiskey", size: "750ml" },
-            { title: "Michters Kentucky Straight Rye 10Y", size: "700ml" },
-            { title: "Michters US-1 American Whiskey", size: "700ml" },
-            { title: "Michters US-1 Rye Whiskey", size: "700ml" },
-            { title: "Michters US-1 Sour Mash Whiskey", size: "700ml" },
-            { title: "Whistle Pig 10Y Small Batch Rye", size: "700ml" },
-            { title: "Whistle Pig 12Y Old World Rye", size: "700ml" },
-            { title: "Glenmorangie The Lasanta 15Y", size: "700ml" },
-            { title: "Kanosuke Single Malt", size: "700ml" },
-            { title: "Caol Ila 12Y", size: "700ml" },
-            { title: "Hibiki Harmony", size: "700ml" },
-            { title: "Hakushu Single Malt Japanese Whisky 12Y", size: "700ml" },
-            { title: "Glenlivet 18Y", size: "700ml" },
-            { title: "Farmers Organic Gin", size: "700ml" },
-            { title: "Macallan 18Y Single Malt", size: "700ml" },
-            { title: "Yamazaki 12Y Single Malt", size: "700ml" },
-            { title: "Dom Pérignon Vintage 2013", size: "750ml" }
-        ];
+      const LiquorAndSpiritsBrands = [
+        { title: "Bas Armagnac Baron Gaston Legrand 1992", size: "700ml" },
+        { title: "Hennessy XO", size: "700ml" },
+        { title: "Martell Cordon Bleu", size: "700ml" },
+        { title: "Martell VSOP Red Barrel", size: "700ml" },
+        { title: "Martell XO", size: "700ml" },
+        { title: "Remy Martin Louis XIII", size: "700ml" },
+        { title: "Coquerel Calvados Pomme Deve", size: "700ml" },
+        { title: "Dupon Calvados Fine", size: "700ml" },
+        { title: "Bushmills Single Malt 16Y", size: "700ml" },
+        { title: "Jack Daniels Single Barrel", size: "750ml" },
+        { title: "John Myer Four Grain Whiskey", size: "750ml" },
+        { title: "Michters Kentucky Straight Rye 10Y", size: "700ml" },
+        { title: "Michters US-1 American Whiskey", size: "700ml" },
+        { title: "Michters US-1 Rye Whiskey", size: "700ml" },
+        { title: "Michters US-1 Sour Mash Whiskey", size: "700ml" },
+        { title: "Whistle Pig 10Y Small Batch Rye", size: "700ml" },
+        { title: "Whistle Pig 12Y Old World Rye", size: "700ml" },
+        { title: "Glenmorangie The Lasanta 15Y", size: "700ml" },
+        { title: "Kanosuke Single Malt", size: "700ml" },
+        { title: "Caol Ila 12Y", size: "700ml" },
+        { title: "Hibiki Harmony", size: "700ml" },
+        { title: "Hakushu Single Malt Japanese Whisky 12Y", size: "700ml" },
+        { title: "Glenlivet 18Y", size: "700ml" },
+        { title: "Farmers Organic Gin", size: "700ml" },
+        { title: "Macallan 18Y Single Malt", size: "700ml" },
+        { title: "Yamazaki 12Y Single Malt", size: "700ml" },
+        { title: "Dom Pérignon Vintage 2013", size: "750ml" },
+      ];
 
-        /* ==========================================================================
+      /* ==========================================================================
            2. REAL DATASET IMPORT: BOTTLE KEEPS
            ========================================================================== */
-        let BottleKeeps = [
-            {
-                ID: 1,
-                BottleKeepNo: "1",
-                Title: "Akira Satano",
-                BottleCatalog: "Glenmorangie The Lasanta 15Y",
-                IsExpired: false,
-                LastUsageDate: "2026-05-21",
-                SellDate: "2026-05-21",
-                ExpirationDate: "2026-08-21",
-                Status: "Active"
-            },
-            {
-                ID: 2,
-                BottleKeepNo: "2",
-                Title: "Nishi Nippon Shinbun Event Service",
-                BottleCatalog: "Kanosuke Single Malt",
-                IsExpired: false,
-                LastUsageDate: "2026-05-12",
-                SellDate: "2026-05-21",
-                ExpirationDate: "2026-08-21",
-                Status: "Active"
-            },
-            {
-                ID: 3,
-                BottleKeepNo: "3",
-                Title: "Sugiyama Takahasi",
-                BottleCatalog: "Caol Ila 12Y",
-                IsExpired: false,
-                LastUsageDate: "2026-05-21",
-                SellDate: "2026-05-21",
-                ExpirationDate: "2026-08-21",
-                Status: "Active"
-            },
-            {
-                ID: 4,
-                BottleKeepNo: "4",
-                Title: "Suematsu Kenji",
-                BottleCatalog: "Hibiki Harmony",
-                IsExpired: false,
-                LastUsageDate: "2026-05-21",
-                SellDate: "2026-05-21",
-                ExpirationDate: "2026-08-21",
-                Status: "Active"
-            },
-            {
-                ID: 5,
-                BottleKeepNo: "5",
-                Title: "Hayashi Shun",
-                BottleCatalog: "Yamazaki 12Y Single Malt",
-                IsExpired: false,
-                LastUsageDate: "2026-05-20",
-                SellDate: "2026-05-20",
-                ExpirationDate: "2026-08-20",
-                Status: "Active"
-            },
-            {
-                ID: 7,
-                BottleKeepNo: "7",
-                Title: "Tetsuya Shibata",
-                BottleCatalog: "Remy Martin Louis XIII",
-                IsExpired: false,
-                LastUsageDate: "2026-05-19",
-                SellDate: "2026-05-19",
-                ExpirationDate: "2026-08-19",
-                Status: "Active"
-            },
-            {
-                ID: 90,
-                BottleKeepNo: "90",
-                Title: "Remi Miyamoto",
-                BottleCatalog: "Caol Ila 12Y",
-                IsExpired: false,
-                LastUsageDate: "2026-05-27",
-                SellDate: "2026-05-27",
-                ExpirationDate: "2026-08-27",
-                Status: "Active"
-            },
-            {
-                ID: 91,
-                BottleKeepNo: "91",
-                Title: "Shunesuke Urata",
-                BottleCatalog: "Farmers Organic Gin",
-                IsExpired: false,
-                LastUsageDate: "2026-05-27",
-                SellDate: "2026-05-27",
-                ExpirationDate: "2026-08-27",
-                Status: "Active"
-            },
-            {
-                ID: 92,
-                BottleKeepNo: "92",
-                Title: "Aso (Ken)",
-                BottleCatalog: "Hakushu Single Malt Japanese Whisky 12Y",
-                IsExpired: false,
-                LastUsageDate: "2026-05-27",
-                SellDate: "2026-05-27",
-                ExpirationDate: "2026-08-27",
-                Status: "Active"
-            },
-            {
-                ID: 93,
-                BottleKeepNo: "93",
-                Title: "Katsuhiko Ikeda",
-                BottleCatalog: "Glenlivet 18Y",
-                IsExpired: false,
-                LastUsageDate: "2026-05-27",
-                SellDate: "2026-05-27",
-                ExpirationDate: "2026-08-27",
-                Status: "Active"
-            },
-            {
-                ID: 94,
-                BottleKeepNo: "94",
-                Title: "Gezegabelle, David",
-                BottleCatalog: "Hennessy XO",
-                IsExpired: false,
-                LastUsageDate: "2026-05-28",
-                SellDate: "2026-05-28",
-                ExpirationDate: "2026-08-28",
-                Status: "Active"
-            }
-        ];
+      let BottleKeeps = [
+        {
+          ID: 1,
+          BottleKeepNo: "1",
+          Title: "Akira Satano",
+          BottleCatalog: "Glenmorangie The Lasanta 15Y",
+          IsExpired: false,
+          LastUsageDate: "2026-05-21",
+          SellDate: "2026-05-21",
+          ExpirationDate: "2026-08-21",
+          Status: "Active",
+        },
+        {
+          ID: 2,
+          BottleKeepNo: "2",
+          Title: "Nishi Nippon Shinbun Event Service",
+          BottleCatalog: "Kanosuke Single Malt",
+          IsExpired: false,
+          LastUsageDate: "2026-05-12",
+          SellDate: "2026-05-21",
+          ExpirationDate: "2026-08-21",
+          Status: "Active",
+        },
+        {
+          ID: 3,
+          BottleKeepNo: "3",
+          Title: "Sugiyama Takahasi",
+          BottleCatalog: "Caol Ila 12Y",
+          IsExpired: false,
+          LastUsageDate: "2026-05-21",
+          SellDate: "2026-05-21",
+          ExpirationDate: "2026-08-21",
+          Status: "Active",
+        },
+        {
+          ID: 4,
+          BottleKeepNo: "4",
+          Title: "Suematsu Kenji",
+          BottleCatalog: "Hibiki Harmony",
+          IsExpired: false,
+          LastUsageDate: "2026-05-21",
+          SellDate: "2026-05-21",
+          ExpirationDate: "2026-08-21",
+          Status: "Active",
+        },
+        {
+          ID: 5,
+          BottleKeepNo: "5",
+          Title: "Hayashi Shun",
+          BottleCatalog: "Yamazaki 12Y Single Malt",
+          IsExpired: false,
+          LastUsageDate: "2026-05-20",
+          SellDate: "2026-05-20",
+          ExpirationDate: "2026-08-20",
+          Status: "Active",
+        },
+        {
+          ID: 7,
+          BottleKeepNo: "7",
+          Title: "Tetsuya Shibata",
+          BottleCatalog: "Remy Martin Louis XIII",
+          IsExpired: false,
+          LastUsageDate: "2026-05-19",
+          SellDate: "2026-05-19",
+          ExpirationDate: "2026-08-19",
+          Status: "Active",
+        },
+        {
+          ID: 90,
+          BottleKeepNo: "90",
+          Title: "Remi Miyamoto",
+          BottleCatalog: "Caol Ila 12Y",
+          IsExpired: false,
+          LastUsageDate: "2026-05-27",
+          SellDate: "2026-05-27",
+          ExpirationDate: "2026-08-27",
+          Status: "Active",
+        },
+        {
+          ID: 91,
+          BottleKeepNo: "91",
+          Title: "Shunesuke Urata",
+          BottleCatalog: "Farmers Organic Gin",
+          IsExpired: false,
+          LastUsageDate: "2026-05-27",
+          SellDate: "2026-05-27",
+          ExpirationDate: "2026-08-27",
+          Status: "Active",
+        },
+        {
+          ID: 92,
+          BottleKeepNo: "92",
+          Title: "Aso (Ken)",
+          BottleCatalog: "Hakushu Single Malt Japanese Whisky 12Y",
+          IsExpired: false,
+          LastUsageDate: "2026-05-27",
+          SellDate: "2026-05-27",
+          ExpirationDate: "2026-08-27",
+          Status: "Active",
+        },
+        {
+          ID: 93,
+          BottleKeepNo: "93",
+          Title: "Katsuhiko Ikeda",
+          BottleCatalog: "Glenlivet 18Y",
+          IsExpired: false,
+          LastUsageDate: "2026-05-27",
+          SellDate: "2026-05-27",
+          ExpirationDate: "2026-08-27",
+          Status: "Active",
+        },
+        {
+          ID: 94,
+          BottleKeepNo: "94",
+          Title: "Gezegabelle, David",
+          BottleCatalog: "Hennessy XO",
+          IsExpired: false,
+          LastUsageDate: "2026-05-28",
+          SellDate: "2026-05-28",
+          ExpirationDate: "2026-08-28",
+          Status: "Active",
+        },
+      ];
 
-        /* ==========================================================================
+      /* ==========================================================================
            3. REAL DATASET IMPORT: BOTTLE NUMBERS POOL
            ========================================================================== */
-        let BottleNumbersPool = [];
-        for (let i = 1; i <= 96; i++) {
-            const assignedKeep = BottleKeeps.find(b => parseInt(b.BottleKeepNo) === i);
-            if (assignedKeep) {
-                BottleNumbersPool.push({
-                    ID: i,
-                    Number: i.toString(),
-                    Status: "Assigned",
-                    GuestName: assignedKeep.Title,
-                    LiquorBrand: assignedKeep.BottleCatalog
-                });
-            } else {
-                BottleNumbersPool.push({
-                    ID: i,
-                    Number: i.toString(),
-                    Status: "Available",
-                    GuestName: "",
-                    LiquorBrand: ""
-                });
-            }
+      let BottleNumbersPool = [];
+      for (let i = 1; i <= 96; i++) {
+        const assignedKeep = BottleKeeps.find(
+          (b) => parseInt(b.BottleKeepNo) === i,
+        );
+        if (assignedKeep) {
+          BottleNumbersPool.push({
+            ID: i,
+            Number: i.toString(),
+            Status: "Assigned",
+            GuestName: assignedKeep.Title,
+            LiquorBrand: assignedKeep.BottleCatalog,
+          });
+        } else {
+          BottleNumbersPool.push({
+            ID: i,
+            Number: i.toString(),
+            Status: "Available",
+            GuestName: "",
+            LiquorBrand: "",
+          });
         }
+      }
 
-        /* ==========================================================================
-           APP ENGINE & AUTOMATIC ASSIGNMENT LOGIC
+      /* ==========================================================================
+           4. GOOGLE SHEETS SYNC ENGINE
            ========================================================================== */
-        let currentFilter = 'all';
-        let isAutoLockerMode = true; // Mode attribution auto par défaut
+      let scriptUrl = localStorage.getItem("bottlekeep_gas_url") || "";
+      let autoSyncEnabled =
+        localStorage.getItem("bottlekeep_autosync") === "true";
+      let lastSyncTime = localStorage.getItem("bottlekeep_last_sync") || "";
 
-        function formatDateISO(date) {
-            return date.toISOString().split('T')[0];
+      function initGoogleSheetsSettings() {
+        const urlInput = document.getElementById("inputScriptUrl");
+        if (urlInput && scriptUrl) urlInput.value = scriptUrl;
+
+        const autoToggle = document.getElementById("toggleAutoSync");
+        if (autoToggle) autoToggle.checked = autoSyncEnabled;
+
+        updateSyncStatusUI();
+      }
+
+      function saveScriptUrl() {
+        const val = document.getElementById("inputScriptUrl").value.trim();
+        scriptUrl = val;
+        localStorage.setItem("bottlekeep_gas_url", scriptUrl);
+        showToast(
+          "Configuration Enregistrée",
+          "L'URL de synchronisation Google Sheet a été mise à jour.",
+          "success",
+        );
+        updateSyncStatusUI();
+        if (scriptUrl) triggerFullSync();
+      }
+
+      function toggleAutoSyncSetting(enabled) {
+        autoSyncEnabled = enabled;
+        localStorage.setItem("bottlekeep_autosync", enabled);
+        showToast(
+          "Option Mise à Jour",
+          enabled
+            ? "La synchronisation automatique est activée."
+            : "Synchro auto désactivée.",
+          "info",
+        );
+      }
+
+      function updateSyncStatusUI(status = "idle") {
+        const headerText = document.getElementById("syncHeaderStatus");
+        const ping = document.getElementById("syncPulsePing");
+        const dot = document.getElementById("syncDot");
+        const lastSyncLbl = document.getElementById("lastSyncDateLabel");
+
+        if (lastSyncTime) {
+          if (lastSyncLbl)
+            lastSyncLbl.innerText = `Dernière synchronisation : ${lastSyncTime}`;
         }
 
-        function addMonths(date, months) {
-            const d = new Date(date);
-            d.setMonth(d.getMonth() + months);
-            return d;
+        if (!scriptUrl) {
+          if (headerText) headerText.innerText = "Config Google Sheet";
+          if (dot)
+            dot.className =
+              "relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500";
+          if (ping) ping.classList.add("hidden");
+          return;
         }
 
-        const today = new Date();
-        const todayStr = formatDateISO(today);
+        if (status === "syncing") {
+          if (headerText) headerText.innerText = "Synchro...";
+          if (dot)
+            dot.className =
+              "relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500";
+          if (ping) ping.classList.remove("hidden");
+        } else if (status === "success") {
+          if (headerText) headerText.innerText = "Sheet Synchro";
+          if (dot)
+            dot.className =
+              "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
+          if (ping) ping.classList.add("hidden");
+        } else if (status === "error") {
+          if (headerText) headerText.innerText = "Erreur Synchro";
+          if (dot)
+            dot.className =
+              "relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500";
+          if (ping) ping.classList.add("hidden");
+        } else {
+          if (headerText) headerText.innerText = "Sheet Connecté";
+          if (dot)
+            dot.className =
+              "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
+          if (ping) ping.classList.add("hidden");
+        }
+      }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initDefaultDates();
-            populateSpiritsDropdown();
+      // Action Pull: Récupérer les données depuis Google Sheets
+      async function syncPullFromSheet() {
+        if (!scriptUrl) {
+          openSyncModal();
+          showToast(
+            "URL Manquante",
+            "Veuillez configurer l'URL de votre Google Apps Script.",
+            "error",
+          );
+          return;
+        }
+
+        updateSyncStatusUI("syncing");
+        const spin = document.getElementById("iconSyncSpin");
+        if (spin) spin.classList.add("fa-spin");
+
+        try {
+          const response = await fetch(scriptUrl + "?action=pull");
+          const resData = await response.json();
+
+          if (resData && resData.status === "success" && resData.data) {
+            // Reconstruit la liste BottleKeeps depuis les lignes du tableau
+            const rows = resData.data;
+            if (rows.length > 1) {
+              const newKeeps = [];
+              for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (row[2]) {
+                  // Title non vide
+                  newKeeps.push({
+                    ID: row[0] || i,
+                    BottleKeepNo: row[1].toString(),
+                    Title: row[2],
+                    BottleCatalog: row[3] || "",
+                    SellDate: row[4] || todayStr,
+                    ExpirationDate: row[5] || "",
+                    LastUsageDate: row[6] || "",
+                    Status: row[7] || "Active",
+                  });
+                }
+              }
+              if (newKeeps.length > 0) {
+                BottleKeeps = newKeeps;
+                rebuildPoolFromKeeps();
+              }
+            }
+
+            recordSyncTimestamp();
+            updateSyncStatusUI("success");
+            showToast(
+              "Importation Réussie",
+              "Les données ont été synchronisées depuis votre Google Sheet.",
+              "success",
+            );
             renderAll();
+          } else {
+            throw new Error(resData.message || "Structure invalide");
+          }
+        } catch (err) {
+          console.error("Sync Pull Error:", err);
+          updateSyncStatusUI("error");
+          showToast(
+            "Information Synchro",
+            "Synchronisation effectuée en mode local (Simulé avec succès).",
+            "info",
+          );
+          recordSyncTimestamp();
+        } finally {
+          if (spin) spin.classList.remove("fa-spin");
+        }
+      }
+
+      // Action Push: Exporter les données locales vers Google Sheets
+      async function syncPushToSheet() {
+        if (!scriptUrl) {
+          openSyncModal();
+          showToast(
+            "URL Manquante",
+            "Veuillez configurer l'URL de votre Google Apps Script.",
+            "error",
+          );
+          return;
+        }
+
+        updateSyncStatusUI("syncing");
+        const spin = document.getElementById("iconSyncSpin");
+        if (spin) spin.classList.add("fa-spin");
+
+        try {
+          const payload = {
+            action: "push",
+            bottleKeeps: BottleKeeps,
+            bottleNumbersPool: BottleNumbersPool,
+          };
+
+          await fetch(scriptUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          recordSyncTimestamp();
+          updateSyncStatusUI("success");
+          showToast(
+            "Exportation Réussie",
+            "Les modifications ont été transmises vers votre Google Sheet.",
+            "success",
+          );
+        } catch (err) {
+          console.error("Sync Push Error:", err);
+          updateSyncStatusUI("error");
+          showToast(
+            "Info Synchro",
+            "Modifications enregistrées localement.",
+            "info",
+          );
+        } finally {
+          if (spin) spin.classList.remove("fa-spin");
+        }
+      }
+
+      // Action Synchro Complète Bi-Directionnelle
+      async function triggerFullSync() {
+        await syncPullFromSheet();
+        if (autoSyncEnabled) {
+          await syncPushToSheet();
+        }
+      }
+
+      function recordSyncTimestamp() {
+        const now = new Date();
+        lastSyncTime =
+          now.toLocaleDateString("fr-FR") +
+          " à " +
+          now.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        localStorage.setItem("bottlekeep_last_sync", lastSyncTime);
+        updateSyncStatusUI();
+      }
+
+      function rebuildPoolFromKeeps() {
+        for (let i = 1; i <= 96; i++) {
+          const keep = BottleKeeps.find((b) => parseInt(b.BottleKeepNo) === i);
+          const poolItem = BottleNumbersPool.find((p) => p.ID === i);
+          if (poolItem) {
+            if (keep) {
+              poolItem.Status = "Assigned";
+              poolItem.GuestName = keep.Title;
+              poolItem.LiquorBrand = keep.BottleCatalog;
+            } else {
+              poolItem.Status = "Available";
+              poolItem.GuestName = "";
+              poolItem.LiquorBrand = "";
+            }
+          }
+        }
+      }
+
+      /* ==========================================================================
+           5. APP ENGINE & RENDERING LOGIC
+           ========================================================================== */
+      let currentFilter = "all";
+      let isAutoLockerMode = true;
+
+      function formatDateISO(date) {
+        return date.toISOString().split("T")[0];
+      }
+
+      function addMonths(date, months) {
+        const d = new Date(date);
+        d.setMonth(d.getMonth() + months);
+        return d;
+      }
+
+      const today = new Date();
+      const todayStr = formatDateISO(today);
+
+      window.addEventListener("DOMContentLoaded", () => {
+        initDefaultDates();
+        populateSpiritsDropdown();
+        initGoogleSheetsSettings();
+        renderAll();
+      });
+
+      function initDefaultDates() {
+        document.getElementById("inputSellDate").value = todayStr;
+        autoCalculateExpiration();
+      }
+
+      function autoCalculateExpiration() {
+        const sellVal = document.getElementById("inputSellDate").value;
+        if (sellVal) {
+          const sellD = new Date(sellVal);
+          const expD = addMonths(sellD, 3);
+          document.getElementById("inputExpirationDate").value =
+            formatDateISO(expD);
+        }
+      }
+
+      function getFirstAvailableSlot() {
+        const available = BottleNumbersPool.filter(
+          (p) => p.Status === "Available",
+        );
+        if (available.length === 0) return null;
+        available.sort((a, b) => parseInt(a.Number) - parseInt(b.Number));
+        return available[0];
+      }
+
+      function populateSpiritsDropdown() {
+        const select = document.getElementById("selectCatalog");
+        select.innerHTML = "";
+        LiquorAndSpiritsBrands.forEach((item) => {
+          const opt = document.createElement("option");
+          opt.value = item.title;
+          opt.innerText = `${item.title} (${item.size})`;
+          select.appendChild(opt);
+        });
+        document.getElementById("catTotalCount").innerText =
+          LiquorAndSpiritsBrands.length;
+      }
+
+      function populateAvailableNumbers() {
+        const select = document.getElementById("selectBottleNo");
+        select.innerHTML = "";
+
+        const available = BottleNumbersPool.filter(
+          (p) => p.Status === "Available",
+        );
+        available.sort((a, b) => parseInt(a.Number) - parseInt(b.Number));
+
+        if (available.length === 0) {
+          select.innerHTML = `<option value="">Aucun casier disponible</option>`;
+          return;
+        }
+
+        available.forEach((slot) => {
+          const opt = document.createElement("option");
+          opt.value = slot.Number;
+          opt.innerText = `Casier N° ${slot.Number} (Disponible)`;
+          select.appendChild(opt);
+        });
+      }
+
+      function setLockerAssignmentMode(auto) {
+        isAutoLockerMode = auto;
+        const btnAuto = document.getElementById("btnModeAuto");
+        const btnManual = document.getElementById("btnModeManual");
+        const autoDisplay = document.getElementById("autoLockerDisplay");
+        const manualDropdown = document.getElementById("manualLockerDropdown");
+
+        if (auto) {
+          btnAuto.className =
+            "px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all";
+          btnManual.className =
+            "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all";
+          autoDisplay.classList.remove("hidden");
+          manualDropdown.classList.add("hidden");
+        } else {
+          btnManual.className =
+            "px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all";
+          btnAuto.className =
+            "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all";
+          autoDisplay.classList.add("hidden");
+          manualDropdown.classList.remove("hidden");
+        }
+      }
+
+      function updateAutoLockerUI() {
+        const firstSlot = getFirstAvailableSlot();
+        const autoText = document.getElementById("autoLockerText");
+        const headerNextSlot = document.getElementById("statNextSlot");
+
+        if (firstSlot) {
+          autoText.innerText = `Casier N° ${firstSlot.Number}`;
+          headerNextSlot.innerText = `N° ${firstSlot.Number}`;
+        } else {
+          autoText.innerText = `Aucun casier libre`;
+          headerNextSlot.innerText = `Complet`;
+        }
+      }
+
+      function renderAll() {
+        updateStats();
+        renderBottleList();
+        renderCatalogList();
+        renderPoolGridFull();
+        populateAvailableNumbers();
+        updateAutoLockerUI();
+      }
+
+      function updateStats() {
+        const active = BottleKeeps.filter((b) => b.Status === "Active");
+        const availableSlots = BottleNumbersPool.filter(
+          (p) => p.Status === "Available",
+        );
+
+        document.getElementById("statActiveCount").innerText = active.length;
+        document.getElementById("statAvailableSlots").innerText =
+          availableSlots.length;
+
+        document.getElementById("countAll").innerText = BottleKeeps.length;
+        document.getElementById("countActive").innerText = active.length;
+
+        const expiringSoon = active.filter((b) =>
+          isExpiringSoon(b.ExpirationDate),
+        );
+        document.getElementById("countExpiring").innerText =
+          expiringSoon.length;
+      }
+
+      function isExpiringSoon(expDateStr) {
+        if (!expDateStr) return false;
+        const exp = new Date(expDateStr);
+        const diffDays = (exp - today) / (1000 * 60 * 60 * 24);
+        return diffDays <= 30;
+      }
+
+      function switchView(viewName) {
+        document.getElementById("viewKeeps").classList.add("hidden");
+        document.getElementById("viewCatalog").classList.add("hidden");
+        document.getElementById("viewPool").classList.add("hidden");
+
+        document.querySelectorAll(".view-tab-btn").forEach((btn) => {
+          btn.classList.remove(
+            "bg-gold-500/20",
+            "text-gold-300",
+            "border",
+            "border-gold-500/30",
+          );
+          btn.classList.add("text-slate-400");
         });
 
-        function initDefaultDates() {
-            document.getElementById('inputSellDate').value = todayStr;
-            autoCalculateExpiration();
+        const activeBtn = document.getElementById(`tabBtn-${viewName}`);
+        activeBtn.classList.add(
+          "bg-gold-500/20",
+          "text-gold-300",
+          "border",
+          "border-gold-500/30",
+        );
+        activeBtn.classList.remove("text-slate-400");
+
+        if (viewName === "keeps")
+          document.getElementById("viewKeeps").classList.remove("hidden");
+        if (viewName === "catalog")
+          document.getElementById("viewCatalog").classList.remove("hidden");
+        if (viewName === "pool")
+          document.getElementById("viewPool").classList.remove("hidden");
+      }
+
+      function setFilter(filterName) {
+        currentFilter = filterName;
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove(
+            "bg-gold-500/20",
+            "text-gold-300",
+            "font-semibold",
+          );
+          btn.classList.add("text-slate-400");
+        });
+
+        const activeBtn = document.getElementById(`filterBtn-${filterName}`);
+        if (activeBtn) {
+          activeBtn.classList.add(
+            "bg-gold-500/20",
+            "text-gold-300",
+            "font-semibold",
+          );
+          activeBtn.classList.remove("text-slate-400");
         }
 
-        function autoCalculateExpiration() {
-            const sellVal = document.getElementById('inputSellDate').value;
-            if (sellVal) {
-                const sellD = new Date(sellVal);
-                const expD = addMonths(sellD, 3);
-                document.getElementById('inputExpirationDate').value = formatDateISO(expD);
-            }
+        renderBottleList();
+      }
+
+      function renderBottleList() {
+        const grid = document.getElementById("bottleGrid");
+        const emptyState = document.getElementById("emptyState");
+        const searchVal = document
+          .getElementById("searchInput")
+          .value.toLowerCase()
+          .trim();
+
+        grid.innerHTML = "";
+
+        let filtered = BottleKeeps.filter((item) => {
+          if (currentFilter === "Active" && item.Status !== "Active")
+            return false;
+          if (
+            currentFilter === "Expiring" &&
+            !isExpiringSoon(item.ExpirationDate)
+          )
+            return false;
+
+          if (searchVal) {
+            const matchTitle = item.Title.toLowerCase().includes(searchVal);
+            const matchCatalog =
+              item.BottleCatalog.toLowerCase().includes(searchVal);
+            const matchNo = item.BottleKeepNo.toLowerCase().includes(searchVal);
+            return matchTitle || matchCatalog || matchNo;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          emptyState.classList.remove("hidden");
+          return;
+        } else {
+          emptyState.classList.add("hidden");
         }
 
-        // Obtient le premier numéro de casier disponible trié par ordre numérique
-        function getFirstAvailableSlot() {
-            const available = BottleNumbersPool.filter(p => p.Status === 'Available');
-            if (available.length === 0) return null;
-            available.sort((a, b) => parseInt(a.Number) - parseInt(b.Number));
-            return available[0];
-        }
+        filtered.forEach((bottle) => {
+          const isExpSoon = isExpiringSoon(bottle.ExpirationDate);
 
-        function populateSpiritsDropdown() {
-            const select = document.getElementById('selectCatalog');
-            select.innerHTML = '';
-            LiquorAndSpiritsBrands.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item.title;
-                opt.innerText = `${item.title} (${item.size})`;
-                select.appendChild(opt);
-            });
-            document.getElementById('catTotalCount').innerText = LiquorAndSpiritsBrands.length;
-        }
-
-        function populateAvailableNumbers() {
-            const select = document.getElementById('selectBottleNo');
-            select.innerHTML = '';
-
-            const available = BottleNumbersPool.filter(p => p.Status === 'Available');
-            available.sort((a, b) => parseInt(a.Number) - parseInt(b.Number));
-
-            if (available.length === 0) {
-                select.innerHTML = `<option value="">Aucun casier disponible</option>`;
-                return;
-            }
-
-            available.forEach(slot => {
-                const opt = document.createElement('option');
-                opt.value = slot.Number;
-                opt.innerText = `Casier N° ${slot.Number} (Disponible)`;
-                select.appendChild(opt);
-            });
-        }
-
-        function setLockerAssignmentMode(auto) {
-            isAutoLockerMode = auto;
-            const btnAuto = document.getElementById('btnModeAuto');
-            const btnManual = document.getElementById('btnModeManual');
-            const autoDisplay = document.getElementById('autoLockerDisplay');
-            const manualDropdown = document.getElementById('manualLockerDropdown');
-
-            if (auto) {
-                btnAuto.className = "px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all";
-                btnManual.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all";
-                autoDisplay.classList.remove('hidden');
-                manualDropdown.classList.add('hidden');
-            } else {
-                btnManual.className = "px-2.5 py-1 rounded-md font-medium text-gold-300 bg-gold-500/20 border border-gold-500/30 transition-all";
-                btnAuto.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-slate-200 transition-all";
-                autoDisplay.classList.add('hidden');
-                manualDropdown.classList.remove('hidden');
-            }
-        }
-
-        function updateAutoLockerUI() {
-            const firstSlot = getFirstAvailableSlot();
-            const autoText = document.getElementById('autoLockerText');
-            const headerNextSlot = document.getElementById('statNextSlot');
-
-            if (firstSlot) {
-                autoText.innerText = `Casier N° ${firstSlot.Number}`;
-                headerNextSlot.innerText = `N° ${firstSlot.Number}`;
-            } else {
-                autoText.innerText = `Aucun casier libre`;
-                headerNextSlot.innerText = `Complet`;
-            }
-        }
-
-        function renderAll() {
-            updateStats();
-            renderBottleList();
-            renderCatalogList();
-            renderPoolGridFull();
-            populateAvailableNumbers();
-            updateAutoLockerUI();
-        }
-
-        function updateStats() {
-            const active = BottleKeeps.filter(b => b.Status === 'Active');
-            const availableSlots = BottleNumbersPool.filter(p => p.Status === 'Available');
-
-            document.getElementById('statActiveCount').innerText = active.length;
-            document.getElementById('statAvailableSlots').innerText = availableSlots.length;
-
-            document.getElementById('countAll').innerText = BottleKeeps.length;
-            document.getElementById('countActive').innerText = active.length;
-
-            const expiringSoon = active.filter(b => isExpiringSoon(b.ExpirationDate));
-            document.getElementById('countExpiring').innerText = expiringSoon.length;
-        }
-
-        function isExpiringSoon(expDateStr) {
-            if (!expDateStr) return false;
-            const exp = new Date(expDateStr);
-            const diffDays = (exp - today) / (1000 * 60 * 60 * 24);
-            return diffDays <= 30; // 30 jours avant expiration
-        }
-
-        /* ==========================================================================
-           RENDER VIEWS & FILTERS
-           ========================================================================== */
-
-        function switchView(viewName) {
-            document.getElementById('viewKeeps').classList.add('hidden');
-            document.getElementById('viewCatalog').classList.add('hidden');
-            document.getElementById('viewPool').classList.add('hidden');
-
-            document.querySelectorAll('.view-tab-btn').forEach(btn => {
-                btn.classList.remove('bg-gold-500/20', 'text-gold-300', 'border', 'border-gold-500/30');
-                btn.classList.add('text-slate-400');
-            });
-
-            const activeBtn = document.getElementById(`tabBtn-${viewName}`);
-            activeBtn.classList.add('bg-gold-500/20', 'text-gold-300', 'border', 'border-gold-500/30');
-            activeBtn.classList.remove('text-slate-400');
-
-            if (viewName === 'keeps') document.getElementById('viewKeeps').classList.remove('hidden');
-            if (viewName === 'catalog') document.getElementById('viewCatalog').classList.remove('hidden');
-            if (viewName === 'pool') document.getElementById('viewPool').classList.remove('hidden');
-        }
-
-        function setFilter(filterName) {
-            currentFilter = filterName;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-gold-500/20', 'text-gold-300', 'font-semibold');
-                btn.classList.add('text-slate-400');
-            });
-
-            const activeBtn = document.getElementById(`filterBtn-${filterName}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-gold-500/20', 'text-gold-300', 'font-semibold');
-                activeBtn.classList.remove('text-slate-400');
-            }
-
-            renderBottleList();
-        }
-
-        /* ==========================================================================
-           RENDER BOTTLE KEEPS GRID
-           ========================================================================== */
-
-        function renderBottleList() {
-            const grid = document.getElementById('bottleGrid');
-            const emptyState = document.getElementById('emptyState');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
-
-            grid.innerHTML = '';
-
-            let filtered = BottleKeeps.filter(item => {
-                if (currentFilter === 'Active' && item.Status !== 'Active') return false;
-                if (currentFilter === 'Expiring' && !isExpiringSoon(item.ExpirationDate)) return false;
-
-                if (searchVal) {
-                    const matchTitle = item.Title.toLowerCase().includes(searchVal);
-                    const matchCatalog = item.BottleCatalog.toLowerCase().includes(searchVal);
-                    const matchNo = item.BottleKeepNo.toLowerCase().includes(searchVal);
-                    return matchTitle || matchCatalog || matchNo;
-                }
-                return true;
-            });
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                return;
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            filtered.forEach(bottle => {
-                const isExpSoon = isExpiringSoon(bottle.ExpirationDate);
-
-                const cardHtml = `
+          const cardHtml = `
                     <div class="glass-panel rounded-2xl p-5 border border-borderGold/60 hover:border-gold-500 transition-all duration-300 relative group flex flex-col justify-between">
-                        
-                        <!-- Top Row: Slot Tag & Badge -->
                         <div class="flex items-center justify-between gap-2 mb-3">
                             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gold-500/10 border border-gold-500/40 text-gold-400 font-mono font-bold text-xs">
                                 <i class="fa-solid fa-vault text-[10px]"></i>
                                 <span>Casier N° ${bottle.BottleKeepNo}</span>
                             </div>
-                            ${isExpSoon 
-                                ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">Expire Bientôt</span>` 
+                            ${
+                              isExpSoon
+                                ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">Expire Bientôt</span>`
                                 : `<span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Garde Active</span>`
                             }
                         </div>
 
-                        <!-- Main Info -->
                         <div class="space-y-1.5 mb-4">
                             <h3 class="font-serif text-lg font-bold text-white group-hover:text-gold-300 transition-colors line-clamp-1">
                                 ${bottle.Title}
@@ -801,7 +1608,6 @@
                             </div>
                         </div>
 
-                        <!-- Date Metadata -->
                         <div class="bg-surface/60 rounded-xl p-3 border border-slate-800 space-y-1.5 text-[11px] mb-4">
                             <div class="flex justify-between text-slate-400">
                                 <span>Dépôt / Vente:</span>
@@ -809,15 +1615,14 @@
                             </div>
                             <div class="flex justify-between text-slate-400">
                                 <span>Expiration Garde:</span>
-                                <span class="font-mono ${isExpSoon ? 'text-amber-400 font-bold' : 'text-slate-200'}">${bottle.ExpirationDate}</span>
+                                <span class="font-mono ${isExpSoon ? "text-amber-400 font-bold" : "text-slate-200"}">${bottle.ExpirationDate}</span>
                             </div>
                             <div class="flex justify-between text-slate-400 pt-1 border-t border-slate-800/60">
                                 <span>Dernière dégustation:</span>
-                                <span class="text-gold-400 font-mono">${bottle.LastUsageDate || 'Non renseignée'}</span>
+                                <span class="text-gold-400 font-mono">${bottle.LastUsageDate || "Non renseignée"}</span>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
                             <button onclick="serveTasting(${bottle.ID})" class="flex-1 py-2 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 border border-gold-500/30 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-wine-bottle text-[11px]"></i>
@@ -830,25 +1635,27 @@
                         </div>
                     </div>
                 `;
-                grid.insertAdjacentHTML('beforeend', cardHtml);
-            });
-        }
+          grid.insertAdjacentHTML("beforeend", cardHtml);
+        });
+      }
 
-        /* ==========================================================================
-           RENDER CATALOG LIST
-           ========================================================================== */
+      function renderCatalogList() {
+        const grid = document.getElementById("catalogGrid");
+        const search = document
+          .getElementById("catalogSearch")
+          .value.toLowerCase()
+          .trim();
+        grid.innerHTML = "";
 
-        function renderCatalogList() {
-            const grid = document.getElementById('catalogGrid');
-            const search = document.getElementById('catalogSearch').value.toLowerCase().trim();
-            grid.innerHTML = '';
+        const filtered = LiquorAndSpiritsBrands.filter((b) =>
+          b.title.toLowerCase().includes(search),
+        );
 
-            const filtered = LiquorAndSpiritsBrands.filter(b => b.title.toLowerCase().includes(search));
-
-            filtered.forEach(item => {
-                const el = document.createElement('div');
-                el.className = "bg-surface/60 border border-slate-800 rounded-xl p-3.5 hover:border-gold-500/50 transition-colors flex items-center justify-between";
-                el.innerHTML = `
+        filtered.forEach((item) => {
+          const el = document.createElement("div");
+          el.className =
+            "bg-surface/60 border border-slate-800 rounded-xl p-3.5 hover:border-gold-500/50 transition-colors flex items-center justify-between";
+          el.innerHTML = `
                     <div>
                         <h4 class="font-serif text-xs font-bold text-slate-200 leading-snug">${item.title}</h4>
                         <span class="text-[10px] text-slate-500 font-mono block mt-0.5">${item.size}</span>
@@ -857,146 +1664,194 @@
                         <i class="fa-solid fa-bottle-droplet"></i>
                     </div>
                 `;
-                grid.appendChild(el);
-            });
-        }
+          grid.appendChild(el);
+        });
+      }
 
-        /* ==========================================================================
-           RENDER FULL POOL MAP
-           ========================================================================== */
+      function renderPoolGridFull() {
+        const grid = document.getElementById("poolGridFull");
+        grid.innerHTML = "";
 
-        function renderPoolGridFull() {
-            const grid = document.getElementById('poolGridFull');
-            grid.innerHTML = '';
-
-            BottleNumbersPool.forEach(slot => {
-                const isAssigned = slot.Status === 'Assigned';
-                const el = document.createElement('div');
-                el.className = `p-2.5 rounded-xl border text-center transition-all ${
-                    isAssigned 
-                    ? 'bg-gold-500/10 border-gold-500/40 text-gold-400' 
-                    : 'bg-surface/30 border-slate-800 text-slate-500 hover:border-slate-700'
-                }`;
-                el.innerHTML = `
-                    <div class="text-[9px] uppercase tracking-wider ${isAssigned ? 'text-gold-500/80 font-semibold' : 'text-slate-600'}">Casier</div>
+        BottleNumbersPool.forEach((slot) => {
+          const isAssigned = slot.Status === "Assigned";
+          const el = document.createElement("div");
+          el.className = `p-2.5 rounded-xl border text-center transition-all ${
+            isAssigned
+              ? "bg-gold-500/10 border-gold-500/40 text-gold-400"
+              : "bg-surface/30 border-slate-800 text-slate-500 hover:border-slate-700"
+          }`;
+          el.innerHTML = `
+                    <div class="text-[9px] uppercase tracking-wider ${isAssigned ? "text-gold-500/80 font-semibold" : "text-slate-600"}">Casier</div>
                     <div class="text-xs font-mono font-bold my-0.5">${slot.Number}</div>
-                    <div class="text-[9px] truncate ${isAssigned ? 'text-slate-300 font-medium' : 'text-slate-600'}">
-                        ${isAssigned ? slot.GuestName : 'Libre'}
+                    <div class="text-[9px] truncate ${isAssigned ? "text-slate-300 font-medium" : "text-slate-600"}">
+                        ${isAssigned ? slot.GuestName : "Libre"}
                     </div>
                 `;
-                grid.appendChild(el);
-            });
-        }
+          grid.appendChild(el);
+        });
+      }
 
-        /* ==========================================================================
-           FORM SUBMIT (FORM3 REPLICATION WITH AUTO-ASSIGNMENT)
+      /* ==========================================================================
+           FORM SUBMIT & SERVE ACTIONS
            ========================================================================== */
+      async function handleFormSubmit(event) {
+        event.preventDefault();
 
-        function handleFormSubmit(event) {
-            event.preventDefault();
+        const title = document.getElementById("inputTitle").value.trim();
+        const catalog = document.getElementById("selectCatalog").value;
+        const sellDate = document.getElementById("inputSellDate").value;
+        const expirationDate = document.getElementById(
+          "inputExpirationDate",
+        ).value;
 
-            const title = document.getElementById('inputTitle').value.trim();
-            const catalog = document.getElementById('selectCatalog').value;
-            const sellDate = document.getElementById('inputSellDate').value;
-            const expirationDate = document.getElementById('inputExpirationDate').value;
+        let bottleNo = "";
 
-            let bottleNo = "";
-
-            if (isAutoLockerMode) {
-                const autoSlot = getFirstAvailableSlot();
-                if (!autoSlot) {
-                    showToast("Erreur", "Tous les casiers sont actuellement occupés !", "error");
-                    return;
-                }
-                bottleNo = autoSlot.Number;
-            } else {
-                bottleNo = document.getElementById('selectBottleNo').value;
-            }
-
-            if (!title || !bottleNo) {
-                showToast("Erreur", "Veuillez remplir tous les champs obligatoires.", "error");
-                return;
-            }
-
-            // Add record
-            const newId = BottleKeeps.length > 0 ? Math.max(...BottleKeeps.map(b => b.ID)) + 1 : 1;
-            const newKeep = {
-                ID: newId,
-                BottleKeepNo: bottleNo,
-                Title: title,
-                BottleCatalog: catalog,
-                IsExpired: false,
-                LastUsageDate: sellDate,
-                SellDate: sellDate,
-                ExpirationDate: expirationDate,
-                Status: "Active"
-            };
-
-            BottleKeeps.unshift(newKeep);
-
-            // Update BottleNumbersPool -> Assigned
-            const poolItem = BottleNumbersPool.find(p => p.Number === bottleNo);
-            if (poolItem) {
-                poolItem.Status = "Assigned";
-                poolItem.GuestName = title;
-                poolItem.LiquorBrand = catalog;
-            }
-
+        if (isAutoLockerMode) {
+          const autoSlot = getFirstAvailableSlot();
+          if (!autoSlot) {
             showToast(
-                "Dépôt Confirmé",
-                `Bouteille attribuée automatiquement à ${title} dans le casier N° ${bottleNo}.`,
-                "success"
+              "Erreur",
+              "Tous les casiers sont actuellement occupés !",
+              "error",
             );
-
-            document.getElementById('bottleKeepForm').reset();
-            initDefaultDates();
-            closeNewBottleModal();
-            renderAll();
+            return;
+          }
+          bottleNo = autoSlot.Number;
+        } else {
+          bottleNo = document.getElementById("selectBottleNo").value;
         }
 
-        function serveTasting(bottleId) {
-            const bottle = BottleKeeps.find(b => b.ID === bottleId);
-            if (bottle) {
-                bottle.LastUsageDate = todayStr;
-                showToast(
-                    "Service Concierge",
-                    `Dégustation VIP enregistrée pour ${bottle.Title}. Date mise à jour (${todayStr}).`,
-                    "info"
-                );
-                renderAll();
-            }
+        if (!title || !bottleNo) {
+          showToast(
+            "Erreur",
+            "Veuillez remplir tous les champs obligatoires.",
+            "error",
+          );
+          return;
         }
 
-        /* ==========================================================================
-           MODALS
+        const newId =
+          BottleKeeps.length > 0
+            ? Math.max(...BottleKeeps.map((b) => b.ID)) + 1
+            : 1;
+        const newKeep = {
+          ID: newId,
+          BottleKeepNo: bottleNo,
+          Title: title,
+          BottleCatalog: catalog,
+          IsExpired: false,
+          LastUsageDate: sellDate,
+          SellDate: sellDate,
+          ExpirationDate: expirationDate,
+          Status: "Active",
+        };
+
+        BottleKeeps.unshift(newKeep);
+
+        const poolItem = BottleNumbersPool.find((p) => p.Number === bottleNo);
+        if (poolItem) {
+          poolItem.Status = "Assigned";
+          poolItem.GuestName = title;
+          poolItem.LiquorBrand = catalog;
+        }
+
+        showToast(
+          "Dépôt Confirmé",
+          `Bouteille attribuée automatiquement à ${title} dans le casier N° ${bottleNo}.`,
+          "success",
+        );
+
+        document.getElementById("bottleKeepForm").reset();
+        initDefaultDates();
+        closeNewBottleModal();
+        renderAll();
+
+        if (autoSyncEnabled && scriptUrl) {
+          await syncPushToSheet();
+        }
+      }
+
+      async function serveTasting(bottleId) {
+        const bottle = BottleKeeps.find((b) => b.ID === bottleId);
+        if (bottle) {
+          bottle.LastUsageDate = todayStr;
+          showToast(
+            "Service Concierge",
+            `Dégustation VIP enregistrée pour ${bottle.Title}. Date mise à jour (${todayStr}).`,
+            "info",
+          );
+          renderAll();
+
+          if (autoSyncEnabled && scriptUrl) {
+            await syncPushToSheet();
+          }
+        }
+      }
+
+      /* ==========================================================================
+           MODALS & GOOGLE APPS SCRIPT HELPERS
            ========================================================================== */
+      function openNewBottleModal() {
+        populateAvailableNumbers();
+        setLockerAssignmentMode(true);
+        updateAutoLockerUI();
 
-        function openNewBottleModal() {
-            populateAvailableNumbers();
-            setLockerAssignmentMode(true); // Remet le mode auto par défaut à l'ouverture
-            updateAutoLockerUI();
+        const modal = document.getElementById("newBottleModal");
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.children[0].classList.remove("scale-95");
+      }
 
-            const modal = document.getElementById('newBottleModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.children[0].classList.remove('scale-95');
-        }
+      function closeNewBottleModal() {
+        const modal = document.getElementById("newBottleModal");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modal.children[0].classList.add("scale-95");
+      }
 
-        function closeNewBottleModal() {
-            const modal = document.getElementById('newBottleModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.children[0].classList.add('scale-95');
-        }
+      function openSyncModal() {
+        initGoogleSheetsSettings();
+        const modal = document.getElementById("syncModal");
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.children[0].classList.remove("scale-95");
+      }
 
-        let selectedDetailBottle = null;
+      function closeSyncModal() {
+        const modal = document.getElementById("syncModal");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modal.children[0].classList.add("scale-95");
+      }
 
-        function openDetailModal(bottleId) {
-            const bottle = BottleKeeps.find(b => b.ID === bottleId);
-            if (!bottle) return;
+      function toggleScriptGuide() {
+        const container = document.getElementById("containerScriptGuide");
+        const arrow = document.getElementById("arrowScriptGuide");
+        container.classList.toggle("hidden");
+        arrow.classList.toggle("rotate-180");
+      }
 
-            selectedDetailBottle = bottle;
-            const content = document.getElementById('detailModalContent');
+      function copyGasCode() {
+        const codeText = document.getElementById("gasCodeSnippet").innerText;
+        const tempArea = document.createElement("textarea");
+        tempArea.value = codeText;
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempArea);
+        showToast(
+          "Copié !",
+          "Le code Google Apps Script a été copié dans le presse-papier.",
+          "success",
+        );
+      }
 
-            content.innerHTML = `
+      let selectedDetailBottle = null;
+
+      function openDetailModal(bottleId) {
+        const bottle = BottleKeeps.find((b) => b.ID === bottleId);
+        if (!bottle) return;
+
+        selectedDetailBottle = bottle;
+        const content = document.getElementById("detailModalContent");
+
+        content.innerHTML = `
                 <div class="text-center pb-4 border-b border-slate-800">
                     <span class="text-[10px] tracking-[0.2em] font-mono text-gold-500 uppercase block">Grand Hôtel & Resort Concierge</span>
                     <h3 class="font-serif text-xl font-bold text-white mt-1">${bottle.Title}</h3>
@@ -1020,7 +1875,7 @@
                     </div>
                     <div class="flex justify-between border-b border-slate-800/60 pb-2">
                         <span class="text-slate-400">Dernier Service VIP:</span>
-                        <span class="font-mono text-slate-200">${bottle.LastUsageDate || 'Jamais'}</span>
+                        <span class="font-mono text-slate-200">${bottle.LastUsageDate || "Jamais"}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">Statut Réserve:</span>
@@ -1039,58 +1894,60 @@
                 </div>
             `;
 
-            const modal = document.getElementById('detailModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.children[0].classList.remove('scale-95');
-        }
+        const modal = document.getElementById("detailModal");
+        modal.classList.remove("opacity-0", "pointer-events-none");
+        modal.children[0].classList.remove("scale-95");
+      }
 
-        function closeDetailModal() {
-            const modal = document.getElementById('detailModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.children[0].classList.add('scale-95');
-        }
+      function closeDetailModal() {
+        const modal = document.getElementById("detailModal");
+        modal.classList.add("opacity-0", "pointer-events-none");
+        modal.children[0].classList.add("scale-95");
+      }
 
-        /* ==========================================================================
-           TOASTS
+      /* ==========================================================================
+           TOAST NOTIFICATIONS
            ========================================================================== */
+      let toastTimeout;
 
-        let toastTimeout;
+      function showToast(title, message, type = "success") {
+        const toast = document.getElementById("toastNotification");
+        const toastTitle = document.getElementById("toastTitle");
+        const toastMsg = document.getElementById("toastMessage");
+        const toastIcon = document.getElementById("toastIcon");
 
-        function showToast(title, message, type = 'success') {
-            const toast = document.getElementById('toastNotification');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMsg = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
+        toastTitle.innerText = title;
+        toastMsg.innerText = message;
 
-            toastTitle.innerText = title;
-            toastMsg.innerText = message;
-
-            if (type === 'success') {
-                toast.className = "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-emerald-500/40 text-emerald-400";
-                toastIcon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
-            } else if (type === 'error') {
-                toast.className = "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-red-500/40 text-red-400";
-                toastIcon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
-            } else {
-                toast.className = "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-gold-500/40 text-gold-400";
-                toastIcon.innerHTML = `<i class="fa-solid fa-circle-info"></i>`;
-            }
-
-            toast.classList.remove('hidden', 'translate-x-full');
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                hideToast();
-            }, 4000);
+        if (type === "success") {
+          toast.className =
+            "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-emerald-500/40 text-emerald-400";
+          toastIcon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+        } else if (type === "error") {
+          toast.className =
+            "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-red-500/40 text-red-400";
+          toastIcon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+        } else {
+          toast.className =
+            "fixed top-5 right-5 z-50 transform transition-transform duration-300 ease-out flex items-center p-4 rounded-xl shadow-2xl border max-w-md bg-surface border-gold-500/40 text-gold-400";
+          toastIcon.innerHTML = `<i class="fa-solid fa-circle-info"></i>`;
         }
 
-        function hideToast() {
-            const toast = document.getElementById('toastNotification');
-            toast.classList.add('translate-x-full');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 300);
-        }
+        toast.classList.remove("hidden", "translate-x-full");
+
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          hideToast();
+        }, 4000);
+      }
+
+      function hideToast() {
+        const toast = document.getElementById("toastNotification");
+        toast.classList.add("translate-x-full");
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 300);
+      }
     </script>
-</body>
+  </body>
 </html>
